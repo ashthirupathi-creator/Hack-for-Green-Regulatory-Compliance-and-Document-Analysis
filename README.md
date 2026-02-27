@@ -1,66 +1,47 @@
-**Real-Time Compliance RAG**
+# Real-Time Compliance RAG 🛡️⚖️
+### *Streaming Regulatory Intelligence with Pathway & Groq*
 
--> An intelligent, streaming RAG (Retrieval-Augmented Generation) pipeline designed for financial institutions to automate the analysis of regulatory documents and audit reports in real-time.
+![Python](https://img.shields.io/badge/python-3.10+-blue.svg)
+![Pathway](https://img.shields.io/badge/Framework-Pathway-green)
+![LLM](https://img.shields.io/badge/LLM-Llama--3.3--70B-orange)
+![Accelerator](https://img.shields.io/badge/Inference-Groq-red)
 
-**Project Overview**
+An industrial-grade, streaming **Retrieval-Augmented Generation (RAG)** pipeline designed for financial institutions. It automates the analysis of regulatory documents and audit reports by eliminating the "Indexing Latency" found in traditional vector databases.
 
--> Financial regulations change rapidly. Traditional RAG systems suffer from "Indexing Latency"—where the AI is only as smart as the last time you manually updated the database.
+---
 
+## 🚀 The Core Problem: Indexing Latency
+In high-stakes compliance, a policy updated 10 minutes ago is already the "law of the land." 
+* **Traditional RAG:** Requires manual triggers to re-index data, causing a "knowledge gap" where the AI provides outdated legal advice.
+* **Our Solution:** Uses **Pathway's Unified Engine** to create a live sync between Google Drive and the LLM. If a file changes, the vector space updates in milliseconds.
 
--> This project solves that by using Pathway’s streaming connectors to establish a live link with Google Drive. When a compliance officer updates a policy PDF, the AI agent is updated instantly without restarting the system.
+---
 
-**Key Features**
+## 🏗️ Technical Architecture & Pathway Integration
 
--> Live Data Sync: Continuous indexing of Google Drive folders.
-
-
--> Local Embedding: Powered by SentenceTransformer on CUDA—no data leaves your local environment for vectorization.
-
-
--> High-Speed Reasoning: Leverages Groq’s Llama-3.3-70B to provide expert-level compliance analysis.
-
-
--> Audit-Ready Citations: Every response includes "Top-K" semantic evidence and document citations for verification.
-
-
-
-**Technical Architecture**
-
-
--> Ingestion: pathway.io.gdrive monitors specific Folder/File IDs in streaming mode.
-
-
--> Parsing: DoclingParser chunks complex financial PDFs, maintaining structural integrity.
-
-
--> Vector Store: Pathway’s unified VectorStoreServer manages embeddings and similarity searches.
-
-
--> Inference: A dedicated answerer.py script queries the Pathway server and uses Groq to generate a "Senior Compliance Officer" formatted report.
+The system bypasses traditional batch processing in favor of a **Unified Streaming Pipeline**:
 
 
 
-**Example Output**
+1.  **Streaming Ingestion:** We utilized `pathway.io.gdrive` to create a live listener. This detects "File Create," "File Update," or "File Delete" events in the source Google Drive folder instantly.
+2.  **Adaptive Parsing:** Employs **Docling** to handle complex financial layouts (multi-column PDFs, nested tables) that standard parsers often break.
+3.  **Local Vectorization:** Vectors are computed locally using `SentenceTransformer` on **CUDA**, ensuring document embeddings never leave your secure environment.
+4.  **Instantaneous Indexing:** We utilized Pathway’s unified **VectorStoreServer**. This keeps the vector index in-memory and synchronized with the data source, providing sub-second retrieval times.
+5.  **LLM Reasoning:** Queries are processed by **Groq’s Llama-3.3-70B**, providing a "Senior Compliance Officer" persona for precise, formal responses.
 
-"""
-User Question: "What is the current threshold for flagging a single transaction?"
+---
 
-**Groq Compliance Report: **
+## 📂 Project Structure
 
-Current Threshold: The current threshold is $5,000. This is a reduction from the 2025 limit of $10,000, as per the AML_Policy_V2_2026.pdf update.
-
-Semantic Evidence:
-
-Rank 1 (Sim: 0.667): AML_Policy_V2_2026.pdf - "Standard Alert Trigger: now lowered to $5,000..."
-"""
-
-Problem Statement Addressed
--> Regulatory compliance departments struggle with massive volumes of legal text. This project demonstrates how Pathway can:
-
-Process streaming legal updates.
-
-Index documents continuously.
-
-
-Provide compliance teams with an LLM interface that has zero-day knowledge of policy changes.
-
+```bash
+green_hackathon/
+├── src/
+│   ├── main.py             # Entry point: Starts the Pathway streaming server
+│   ├── answerer.py         # Client script: Handles user queries and Groq API calls
+│   └── utils/
+│       ├── parser.py       # Custom Docling configuration for financial PDFs
+│       └── embeddings.py   # Local embedding logic (CUDA optimized)
+├── .gitignore              # Prevents leaking credentials.json and __pycache__
+├── credentials.json        # Google Cloud Service Account / OAuth keys
+├── README.md               # Detailed documentation
+└── requirements.txt        # Exact versions for reproducibility
